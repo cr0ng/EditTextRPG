@@ -1,31 +1,60 @@
 #pragma once
+#include <string>
 #include "Weapon.h"
 #include "Armor.h"
 
 
 class Player
 {
+	std::string Name;
+	int MaxHP;
+	int HP;
+	int BaseATK;
+	int BaseDEF;
+	int Ores; // ±¤¼®
+
 public:
 
-	Player();
-
-	int GetBaseHP() { return BaseHP; }
-	int GetBaseATK() { return BaseATK; }
-
-	Weapon& GetWeapon() { return Sword; }
-	Armor& GetArmor() { return Mail; }
-
-	int GetAttack() { return Sword.GetPower(); }
-	int GetDefense() { return Mail.GetPower(); }
+	Weapon Wpn;
+	Armor Arm;
 
 
+	Player(const std::string& name = "Me")
+		: Name(name), MaxHP(100), HP(100), BaseATK(5), BaseDEF(2), Ores(0),
+		Wpn("°Ë", 5), Arm("°©¿Ê", 2) 
+	{
+
+	}
 
 
-private:
-	int BaseHP = 100;
-	int BaseATK = 10;
+	int GetHP() const { return HP; }
+	int GetMaxHP() const { return MaxHP; }
+	int GetOres() const { return Ores; }
 
-	Weapon Sword{ "Rusty Sword", 3 };
-	Armor Mail{ "Worn Mail", 1 };
 
+	void HealFull() { HP = MaxHP; }
+
+
+	void AddOres(int n) { Ores += n; }
+	bool ConsumeOres(int n) 
+	{
+		if (Ores < n) return false;
+		Ores -= n;
+		return true;
+	}
+
+
+	int GetAttack() const { return BaseATK + Wpn.GetStat(); }
+	int GetDefense() const { return BaseDEF + Arm.GetStat(); }
+
+
+	bool IsDead() const { return HP <= 0; }
+
+
+	void TakeDamage(int dmg)
+	{
+		if (dmg < 0) dmg = 0;
+		HP -= dmg;
+		if (HP < 0) HP = 0;
+	}
 };

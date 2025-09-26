@@ -1,26 +1,36 @@
 #pragma once
 #include "EquipmentBase.h"
 
-//방어구 전용 클래스
-// 기본 방어력(BaseDefense)에 강화 단계 x DefensePerPlus 만큼 더해 최종 방어력
 
 class Armor : public EquipmentBase
 {
+
 public:
-	Armor(const std::string& inName, int inBaseDefense)
-		: EquipmentBase(inName, 5), BaseDefense(inBaseDefense)
+
+	Armor(const std::string& name = "Armor", int baseStat = 3)
+		: EquipmentBase(name, baseStat) 
 	{
 
 	}
 
-	int GetPower() const override { return BaseDefense + GetPlus() * DefensePerPlus; }
 
-	static constexpr int DefensePerPlus = 3;
+	int GetIncrementPerLevel(int levelToReach) const override
+	{
+		// 방어구는 조금 덜 오르지만 레벨이 오를수록 증가
+		return 1 + levelToReach; // 2,3,4,...
+	}
 
-private:
 
-	int BaseDefense = 1;	//	기본 방어력
+	int GetSuccessChance(int currentLevel) const override 
+	{
+		int chance = 92 - currentLevel * 9; // 조금 더 잘 붙음
+		if (chance < 12) chance = 12;
+		return chance;
+	}
 
+
+	int GetOreCost(int currentLevel) const override 
+	{
+		return 1 + currentLevel; // 동일 규칙
+	}
 };
-
-
