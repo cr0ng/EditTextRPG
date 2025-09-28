@@ -25,4 +25,6 @@ private:
 	void DoEnhance();
 	bool DoBattle();
 	int RollPercent();
+	void GetFortuneItem();
+
 };

@@ -3,13 +3,12 @@
 #include "Home.h"
 
 
-static void TryEnhance(EquipmentBase& eq, Player& p, int randPercent) 
+static void TryEnhance(EquipmentBase& eq, Player& p, int randPercent, int Fortune) 
 {
 
 	int curLv = eq.GetLevel();
 	int cost = eq.GetOreCost(curLv);
 	int chance = eq.GetSuccessChance(curLv);
-
 
 	if (!p.ConsumeOres(cost)) 
 	{
@@ -23,7 +22,10 @@ static void TryEnhance(EquipmentBase& eq, Player& p, int randPercent)
 		eq.GetName().c_str(), curLv, chance, cost);
 		printf("------------------------------------------------------\n");
 
-
+		if (Fortune == 1) {
+			randPercent += 10;
+			p.ConsumeFortune(1);
+		}
 	if (randPercent <= chance) 
 	{
 		eq.IncreaseLevel();
@@ -36,13 +38,14 @@ static void TryEnhance(EquipmentBase& eq, Player& p, int randPercent)
 }
 
 
-void Home::EnhanceWeapon(Player& p, int randPercent) 
+void Home::EnhanceWeapon(Player& p, int randPercent, int Fortune) 
 {
-	TryEnhance(p.Wpn, p, randPercent);
+	TryEnhance(p.Wpn, p, randPercent, Fortune);
 }
 
 
-void Home::EnhanceArmor(Player& p, int randPercent) 
+
+void Home::EnhanceArmor(Player& p, int randPercent, int Fortune)
 {
-	TryEnhance(p.Arm, p, randPercent);
+	TryEnhance(p.Arm, p, randPercent, Fortune);
 }

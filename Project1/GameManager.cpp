@@ -19,13 +19,20 @@ int GameManager::RollPercent()
 }
 
 
+void GameManager::GetFortuneItem()
+{
+	
+
+}
+
+
 void GameManager::PrintStatus() 
 {
 	printf("\n========= 상태 =========================%s", "\n");
 	printf("턴: %d / 강제전투까지 남은 턴: %d\n", turn, (maxTurnsBeforeForcedBattle - (turn % maxTurnsBeforeForcedBattle)) % maxTurnsBeforeForcedBattle);
 	printf("========================================\n");
-	printf("HP: %d/%d | ATK: %d | DEF: %d | 광석: %d\n",
-		player.GetHP(), player.GetMaxHP(), player.GetAttack(), player.GetDefense(), player.GetOres());
+	printf("HP: %d/%d | ATK: %d | DEF: %d | 광석: %d | 행운석: %d\n",
+		player.GetHP(), player.GetMaxHP(), player.GetAttack(), player.GetDefense(), player.GetOres(), player.GetFortune());
 	printf("========================================\n");
 	printf("무기 %s +%d, 방어구 %s +%d\n",
 		player.Wpn.GetName().c_str(), player.Wpn.GetLevel(),
@@ -40,10 +47,21 @@ void GameManager::DoFarm()
 {
 	// 랜덤 드랍: 0~3개
 	int ores = std::rand() % 4;
+
+	// 강화 확률 올려주는 아이템 10% 확률로 나오기
+	int HaveFortune = std::rand() % 101;
+
+	if (HaveFortune < 10) {
+		player.AddFortune(1);
+	}
+
 	player.AddOres(ores);
 	++turn;
 	printf("========================================\n");
 	printf("파밍 완료. 광석 %d개 획득! (총 %d)\n", ores, player.GetOres());
+	if (HaveFortune < 10) {
+		printf("축하! 행운의 돌 1개 획득! (총 %d)\n", player.GetFortune());
+	}
 }
 
 
@@ -60,8 +78,8 @@ void GameManager::DoEnhance()
 		int chance = player.Wpn.GetSuccessChance(curLv);
 		int cost = player.Wpn.GetOreCost(curLv);
 		printf("========================================\n");
-		printf("예상: 무기 +%d -> +%d 시도 | 성공확률 %d%% | 소모 광석 %d개 (보유 %d)\n",
-			curLv, curLv + 1, chance, cost, player.GetOres());
+		printf("예상: 무기 +%d -> +%d 시도 | 성공확률 %d%% | 소모 광석 %d개 (보유 %d) | 행운석 (보유 %d) \n",
+			curLv, curLv + 1, chance, cost, player.GetOres(), player.GetFortune());
 		printf("========================================\n");
 		printf("강화하시겠습니까? (1=예, 2=아니오) > ");
 		int confirm = 0;
@@ -72,7 +90,18 @@ void GameManager::DoEnhance()
 			return;
 		}
 
-		home.EnhanceWeapon(player, RollPercent());
+		printf("행운석을 사용하시겠습니까? (1=예, 2=아니오) > ");
+		int ForturnConfirm = 0;
+		std::cin >> ForturnConfirm;
+		if (confirm == 1)
+		{
+			printf("행운석을 사용하여 강화 확률을 올렸습니다. \n");
+			home.EnhanceWeapon(player, RollPercent(),1);
+		}
+		if (confirm == 2)
+		{
+			home.EnhanceWeapon(player, RollPercent(),0);
+		}
 	}
 	else if (sel == 2) 
 	{
@@ -80,8 +109,8 @@ void GameManager::DoEnhance()
 		int chance = player.Arm.GetSuccessChance(curLv);
 		int cost = player.Arm.GetOreCost(curLv);
 		printf("========================================\n");
-		printf("예상: 방어구 +%d -> +%d 시도 | 성공확률 %d%% | 소모 광석 %d개 (보유 %d)\n",
-			curLv, curLv + 1, chance, cost, player.GetOres());
+		printf("예상: 방어구 +%d -> +%d 시도 | 성공확률 %d%% | 소모 광석 %d개 (보유 %d) | 행운석 (보유 %d)\n",
+			curLv, curLv + 1, chance, cost, player.GetOres(), player.GetFortune());
 		printf("========================================\n");
 		printf("강화하시겠습니까? (1=예, 2=아니오) > ");
 		int confirm = 0;
@@ -92,7 +121,18 @@ void GameManager::DoEnhance()
 			return;
 		}
 
-		home.EnhanceArmor(player, RollPercent());
+		printf("행운석을 사용하시겠습니까? (1=예, 2=아니오) > ");
+		int ForturnConfirm = 0;
+		std::cin >> ForturnConfirm;
+		if (confirm == 1)
+		{
+			printf("행운석을 사용하여 강화 확률을 올렸습니다. \n");
+			home.EnhanceArmor(player, RollPercent(), 1);
+		}
+		if (confirm == 2)
+		{
+			home.EnhanceArmor(player, RollPercent(), 0);
+		}
 	}
 	else
 	{
